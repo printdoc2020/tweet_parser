@@ -9,7 +9,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 import nltk
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
-
+nltk.download('wordnet')
 
 
 from nltk.tokenize import RegexpTokenizer
