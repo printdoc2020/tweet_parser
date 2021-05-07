@@ -198,7 +198,7 @@ class Helper:
         # print("resp.status_code", resp.status_code)
 
         if resp.status_code == 200:
-            soup = BeautifulSoup(resp.content, "lxml")
+            soup = BeautifulSoup(resp.content, "html.parser")
             res["link_works"] = 1
         else:
             return res
