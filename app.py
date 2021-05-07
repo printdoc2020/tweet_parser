@@ -167,7 +167,7 @@ if id_of_tweet:
 				df[c] = ""
 
 
-	tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click here to download the file')
+	tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click to download the file (can use Excel to open it)')
 	st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 
