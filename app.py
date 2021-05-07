@@ -134,7 +134,7 @@ st.write('Last updated: May 7, 2021')
 
 api = read_config()
 id_of_tweet = st.text_input('crawl tweet id:', "")
-st.markdown('Enter **any** tweet id, for example: _"1370087554901553152"_ or _"https://twitter.com/thetech/status/1370087554901553152"_')
+st.markdown('Enter **any** tweet id, for example: _"https://twitter.com/thetech/status/1370087554901553152"_ or simply _"1370087554901553152"_')
 
 if id_of_tweet:
 
