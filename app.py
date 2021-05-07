@@ -7,7 +7,7 @@ from parse_raw_tweet import parse_raw_tweet
 import base64
 
 st.set_page_config(
-	 page_title="Crawl Tweets",
+	 page_title="Tweet Parser",
 	 page_icon="random",
 	 layout="wide",
 	 initial_sidebar_state="expanded",
@@ -129,7 +129,7 @@ all_cols = ["Variables",
 
 
 
-st.title('Tweet Crawler')
+st.title('Tweet Parser')
 
 api = read_config()
 id_of_tweet = st.text_input('Search by tweet id', "1388116541426835458")
@@ -159,7 +159,6 @@ st.markdown(f"**All texts (tweet content, article content,...) after processing:
 
 st.markdown("**Tweet ID:** " + data["tweetid"])
 
-st.write(top_n_topics_df["top1"])
 for c in all_cols:
 	if c not in df.columns:
 		if c in top_n_topics_df["top1"].values:

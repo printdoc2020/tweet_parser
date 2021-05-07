@@ -112,8 +112,6 @@ class Tweet:
         stop_words=self.stop_words
         text = self.get_full_text()
         
-        print("text:", text)
-        
         text = self.remove_links(text)
         
         text = self.remove_users(text)
