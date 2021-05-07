@@ -6,6 +6,8 @@ import re
 import pandas as pd
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 # from spellchecker import SpellChecker
+import nltk
+nltk.download('stopwords')
 
 from nltk.tokenize import RegexpTokenizer
 from nltk import pos_tag
