@@ -130,48 +130,45 @@ all_cols = ["Variables",
 
 
 st.title('Tweet Parser')
+st.write('Last updated: May 7, 2021')
 
 api = read_config()
-id_of_tweet = st.text_input('Search by tweet id', "1388116541426835458")
-st.markdown('For example: _"1388116541426835458"_ or _"https://twitter.com/presstelegram/status/1390463196075593728"_')
+id_of_tweet = st.text_input('crawl tweet id', "")
+st.markdown('Enter a tweet id, for example: _"1370087554901553152"_ or _"https://twitter.com/thetech/status/1370087554901553152"_')
 
-id_of_tweet = id_of_tweet.split("/")[-1]
+if id_of_tweet:
 
-raw_tweet = api.get_status(id_of_tweet, tweet_mode="extended")._json
-tweet =  parse_raw_tweet(raw_tweet)
-data = tweet.data
-df = pd.DataFrame([data], columns=data.keys())
+	id_of_tweet = id_of_tweet.split("/")[-1]
 
+	raw_tweet = api.get_status(id_of_tweet, tweet_mode="extended")._json
+	tweet =  parse_raw_tweet(raw_tweet)
+	data = tweet.data
+	df = pd.DataFrame([data], columns=data.keys())
 
+	st.write(data)
 
+	top_n_topics_df, keywords_appearing_df = tweet.get_top_n_topics()
+	st.write(top_n_topics_df)
 
-# st.write( set.intersection( set(df.columns), set(cols) ))
-# st.write( set(df.columns) - set(cols) )
-# st.write( set(cols) -  set(df.columns) )
+	st.markdown(f"**All texts (tweet content, article content,...) after processing:** _{tweet.processed_tweet}_")
 
-st.write(data)
-
-top_n_topics_df, keywords_appearing_df = tweet.get_top_n_topics()
-st.write(top_n_topics_df)
-st.write(keywords_appearing_df)
-
-st.markdown(f"**All texts (tweet content, article content,...) after processing:** _{tweet.processed_tweet}_")
-
-st.markdown("**Tweet ID:** " + data["tweetid"])
-
-for c in all_cols:
-	if c not in df.columns:
-		if c in top_n_topics_df["top1"].values:
-			df[c] = 1
-		elif c in tweet.topics_cols:
-			df[c] = 0
-		else:
-			df[c] = ""
+	st.write(keywords_appearing_df.T)
 
 
+	st.markdown("**Tweet ID:** " + data["tweetid"])
 
-tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click here to download the data')
-st.markdown(tmp_download_link, unsafe_allow_html=True)
+	for c in all_cols:
+		if c not in df.columns:
+			if c in top_n_topics_df["top1"].values:
+				df[c] = 1
+			elif c in tweet.topics_cols:
+				df[c] = 0
+			else:
+				df[c] = ""
+
+
+	tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click here to download the file')
+	st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 
 
