@@ -50,7 +50,7 @@ class Tweet:
                         .union(['shall', 'cannot', 'could', 'done', 'let', 'may' 'mayn',
                                        'might', 'must', 'need', 'ought', 'oughtn',
                                        'shall', 'would', 'br'])
-        with open("./data/keywords.json", "r") as read_file:
+        with open("input/keywords.json", "r") as read_file:
             self.keywords = json.load(read_file)
 
         self.processed_tweet = ""
