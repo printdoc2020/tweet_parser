@@ -135,7 +135,7 @@ st.write('Last updated: May 7, 2021')
 api = read_config()
 id_of_tweet = st.text_input('crawl tweet id:', "")
 st.markdown('Enter **any** tweet id, for example: _"https://twitter.com/thetech/status/1370087554901553152"_ or simply _"1370087554901553152"_')
-
+st.markdown("Another example with 2 URLs in the tweet: _https://twitter.com/LVTimesNews/status/1362812451356631048_" )
 if id_of_tweet:
 
 	id_of_tweet = id_of_tweet.split("/")[-1]

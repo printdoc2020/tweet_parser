@@ -289,12 +289,13 @@ class Helper:
 
     @staticmethod
     def check_a_url_in_website(website, a_url):
+
+
         if website is None:
             return 0
         url = Helper.expandURL(a_url)
 
-
-        if website in url:
+        if website.lower() in url.lower():
             return 1
         else:
             return 0
