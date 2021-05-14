@@ -5,6 +5,7 @@ import json
 import tweepy
 from parse_raw_tweet import parse_raw_tweet 
 import base64
+import yaml
 
 st.set_page_config(
 	 page_title="Tweet Parser",
@@ -15,18 +16,17 @@ st.set_page_config(
 
 
 def read_config():
-	## TODO: add to config file
-	ACCESS_TOKEN = '41080440-qjZ1Jl4Ua61IXtvN4WSxUnm3RoxEaBHYGkOWLqQQO'
-	ACCESS_SECRET = 'aCKVeUDUIuxp9ZpFPmZWpbdOfq4N1LDKSQohTUsIhngIh'
-	CONSUMER_KEY = '75bNvkIXnOFPKqU44O9ClIjNR'
-	CONSUMER_SECRET = '89Es022ydnPadYRBm9F7lC8NaW1XhgmT7xjbV0UQhs673Si2iN'
+
+	with open("config.yaml", 'r') as ymlfile:
+		config = yaml.safe_load(ymlfile)
 
 	## authenticate
-	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-	auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+	auth = tweepy.OAuthHandler(config['CONSUMER_KEY'], config['CONSUMER_SECRET'])
+	auth.set_access_token(config['ACCESS_TOKEN'], config['ACCESS_SECRET'])
 	api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, compression=True)
 
-	return api
+	all_cols = config["all_cols"]
+	return api, all_cols
 
 
 
@@ -53,122 +53,66 @@ def download_link(object_to_download, download_filename, download_link_text):
 	return f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
 
 
-
-all_cols = ["Variables",
-"Date",
-"Time",
-"Type",
-"Hashtag 0/1",
-"Hashtag #",
-"Specific Hashtag",
-"0/1 @",
-"# @",
-"Specific @",
-"Tweet content",
-"Link Title",
-"Article Content in the Tweet",
-"Link",
-"Link 0/1",
-"# links",
-"link works",
-"link to news website",
-"Website Type",
-"Social Media Type",
-"Retweeted/Quoted @",
-"Illustration",
-"Illustration Type",
-"Hashtag game",
-"News phrase",
-"Sensational phrase",
-"Local",
-"Regional",
-"National",
-"International",
-"Traffic",
-"Weather regular",
-"Weather extreme",
-"Crime",
-"Events",
-"Lifestyle",
-"Entertainment",
-"Sports",
-"Education",
-"Politics",
-"City hall",
-"Statehouse",
-"Courthouse",
-"Economy",
-"Business",
-"Stock Exchange",
-"Health",
-"Science",
-"Technology",
-"Travel",
-"Leisure",
-"Obituaries",
-"Abortion",
-"2nd Amenments",
-"Immigration",
-"Police brutality",
-"Terrorism",
-"Race",
-"Gender",
-"Religion",
-"Russian Sphere",
-"Discredit institutions",
-"Discredit media",
-"Unclear",
-"Filler",
-"Other topic",
-"Informative",
-"Fearmongering",
-"Provocative",
-"Reflexive portrayal"]
-
-
-
-
-
 st.title('Tweet Parser')
-st.write('Last updated: May 7, 2021')
+st.write('Last updated: May 14, 2021')
 
-api = read_config()
-id_of_tweet = st.text_input('crawl tweet id:', "")
-st.markdown('Enter **any** tweet id, for example: _"https://twitter.com/thetech/status/1370087554901553152"_ or simply _"1370087554901553152"_')
-st.markdown("Another example with 2 URLs in the tweet: _https://twitter.com/LVTimesNews/status/1362812451356631048_" )
-if id_of_tweet:
+api, all_cols= read_config()
 
-	id_of_tweet = id_of_tweet.split("/")[-1]
-
-	raw_tweet = api.get_status(id_of_tweet, tweet_mode="extended")._json
-	tweet =  parse_raw_tweet(raw_tweet)
-	data = tweet.data
-	df = pd.DataFrame([data], columns=data.keys())
-
-	st.write(data)
-
-	top_n_topics_df, keywords_appearing_df = tweet.get_top_n_topics()
-	st.write(top_n_topics_df)
-
-	st.markdown(f"**All texts (tweet content, article content,...) after processing:** _{tweet.processed_tweet}_")
-
-	st.write(keywords_appearing_df.T)
+# id_of_tweet = st.text_input('crawl tweet id:', "")
+tweet_url = st.text_input('Enter any tweet id, Ex: https://twitter.com/Quicktake/status/1392847854323052549', "https://twitter.com/Quicktake/status/1392847854323052549")
+# embed streamlit docs in a streamlit app
 
 
-	st.markdown("**Tweet ID:** " + data["tweetid"])
-
-	for c in all_cols:
-		if c not in df.columns:
-			if c in top_n_topics_df["top1"].values:
-				df[c] = 1
-			elif c in tweet.topics_cols:
-				df[c] = 0
-			else:
-				df[c] = ""
 
 
-	tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click HERE to download to file (can use Excel to open it)')
-	st.markdown(tmp_download_link, unsafe_allow_html=True)
+if tweet_url:
+
+	html_template = f'<blockquote class="twitter-tweet"><a href="{tweet_url}"></a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+
+	id_of_tweet = tweet_url.split("/")[-1]
+	try:
+		raw_tweet = api.get_status(id_of_tweet, tweet_mode="extended")._json
+	except:
+		st.markdown('**Can not crawl the tweet. Please check on the tweet ID!**')
+		raw_tweet = None
+	if raw_tweet:
+		tweet =  parse_raw_tweet(raw_tweet)
+		data = tweet.data
+		df = pd.DataFrame([data], columns=data.keys())
+
+		st.write(data)
+
+		top_n_topics_df, keywords_appearing_df = tweet.get_top_n_topics()
+		st.write(top_n_topics_df)
+
+		st.markdown(f"**All texts (tweet content, article content,...) after processing:** _{tweet.processed_tweet}_")
+
+		st.write(keywords_appearing_df.T)
+
+
+		st.markdown("**Tweet ID:** " + data["tweetid"])
+
+		components.html(html_template, height=600, width=None, scrolling=True)
+
+
+		correct_topics = st.multiselect(
+	     'Choose correct topic(s) for the tweet (the topics(s) below suggested by the dictionary)',
+	     sorted(tweet.topics_cols),
+	     [top_n_topics_df["top1"].values])
+
+
+		for c in all_cols:
+			if c not in df.columns:
+				if c in correct_topics:
+					df[c] = 1
+				elif c in tweet.topics_cols:
+					df[c] = 0
+				else:
+					df[c] = ""
+
+
+		tmp_download_link = download_link(df.T, f'tweet_{id_of_tweet}.csv', 'Click HERE to download to file (can use Excel to open it)')
+		st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 
 
