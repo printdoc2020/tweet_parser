@@ -86,9 +86,9 @@ if tweet_url:
 
 		st.write(data)
 
-		num_links = data['# links']
-		for i in range(num_links):
-			st.
+		# num_links = data['# links']
+		# for i in range(num_links):
+		# 	st.
 
 
 
