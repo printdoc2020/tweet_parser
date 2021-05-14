@@ -21,8 +21,8 @@ def read_config():
 		config = yaml.safe_load(ymlfile)
 
 	## authenticate
-	auth = tweepy.OAuthHandler(config['CONSUMER_KEY'], config['CONSUMER_SECRET'])
-	auth.set_access_token(config['ACCESS_TOKEN'], config['ACCESS_SECRET'])
+	auth = tweepy.OAuthHandler(st.secrets['CONSUMER_KEY'], st.secrets['CONSUMER_SECRET'])
+	auth.set_access_token(st.secrets['ACCESS_TOKEN'], st.secrets['ACCESS_SECRET'])
 	api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, compression=True)
 
 	all_cols = config["all_cols"]
@@ -59,7 +59,7 @@ st.write('Last updated: May 14, 2021')
 api, all_cols= read_config()
 
 # id_of_tweet = st.text_input('crawl tweet id:', "")
-tweet_url = st.text_input('Enter any tweet id, Ex: https://twitter.com/Quicktake/status/1392847854323052549', "https://twitter.com/Quicktake/status/1392847854323052549")
+tweet_url = st.text_input('Enter any tweet id, Ex: https://twitter.com/Quicktake/status/1392535793038671872', "")
 # embed streamlit docs in a streamlit app
 
 
@@ -80,14 +80,24 @@ if tweet_url:
 		data = tweet.data
 		df = pd.DataFrame([data], columns=data.keys())
 
+		data['Date'] = data['Date'] 
+		data['Time'] = data['Time'] + " UTC"
+
+
 		st.write(data)
+
+		num_links = data['# links']
+		for i in range(num_links):
+			st.
+
+
 
 		top_n_topics_df, keywords_appearing_df = tweet.get_top_n_topics()
 		st.write(top_n_topics_df)
 
 		st.markdown(f"**All texts (tweet content, article content,...) after processing:** _{tweet.processed_tweet}_")
 
-		st.write(keywords_appearing_df.T)
+		st.write(keywords_appearing_df.T.sort_index())
 
 
 		st.markdown("**Tweet ID:** " + data["tweetid"])
