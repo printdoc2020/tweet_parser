@@ -6,7 +6,7 @@ import tweepy
 from parse_raw_tweet import parse_raw_tweet 
 import base64
 import yaml
-
+import time
 st.set_page_config(
 	 page_title="Tweet Parser",
 	 page_icon="random",
@@ -59,7 +59,7 @@ st.write('Last updated: May 14, 2021')
 api, all_cols= read_config()
 
 # id_of_tweet = st.text_input('crawl tweet id:', "")
-tweet_url = st.text_input('Enter any tweet id, Ex: https://twitter.com/Quicktake/status/1392535793038671872', "")
+tweet_url = st.text_input('Enter any tweet id, Ex: https://twitter.com/Quicktake/status/1392847854323052549', "")
 # embed streamlit docs in a streamlit app
 
 
@@ -86,9 +86,17 @@ if tweet_url:
 
 		st.write(data)
 
+		# time.sleep(3)
 		# num_links = data['# links']
+		# web_type_list = list()
+		# st.write("Web Type:")
 		# for i in range(num_links):
-		# 	st.
+		# 	st.markdown('\tchoose web type for **{}**'.format(data["Link"][i]))
+		# 	web_type = st.radio("", ("a", "v", "c"))
+		# 	web_type_list.append(web_type)
+
+		# st.write(web_type_list)
+
 
 
 

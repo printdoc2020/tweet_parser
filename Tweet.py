@@ -103,7 +103,11 @@ class Tweet:
         for c in ["Link Title", "Article content in the tweet", "Specific Hashtag"]:
             tmp[c] = self.concat_text_list_to_text(self.data[c])
 
-        other_text_cols = ["Tweet content"]
+        if self.data.get("quotetweet_text") is not None:
+            other_text_cols = [ "quotetweet_text", "Tweet content"]
+        else:
+            other_text_cols = ["Tweet content"]
+
 
         res =  " ".join(str(tmp[c]) for c in ["Link Title", "Article content in the tweet", "Specific Hashtag"])
         for c in other_text_cols:
